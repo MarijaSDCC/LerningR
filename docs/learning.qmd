@@ -1,0 +1,31 @@
+---
+title: "Reproducible document"
+author: "MarijaP"
+format: html
+---
+
+## Basics of R
+
+```{r}
+1 + 1
+```
+
+## Setup code chunk
+
+```{r setup}
+library(tidyverse)
+```
+## About me
+
+-Marija Petkovic
+-Steno Diabetes Center Copenhagen
+-Translational Research
+
+DDEA postdoc working on a **diabetic** *foot complications*
+
+## Simple code
+```{r}
+3 * 3
+r3::open_feedback_survey()
+```
+
