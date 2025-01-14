@@ -6,6 +6,9 @@ This project...
 
 # Brief description of folder and file contents
 
+## Testing for Git
+Really nice weather outsider
+
 TODO: As project evolves, add brief description of what is inside the
 data, docs and R folders.
 
