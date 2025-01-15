@@ -29,15 +29,20 @@ DDEA postdoc working on a **diabetic** *foot complications*
 ## Setup code chunk
 
 ```{r setup}
-# the two options of what to show in the output file (elated to chapter 8 of the course)
-# press ctrl-shift-render after you give eg.commands bellow
-# this has to be right after r setup code chunk with no space
 #| message: false
-#|warning: false
+#| warning: false
+
+# the two options of what to show in the output file (elated to chapter 8 of the course)
+# press ctrl-shift-render after you give e.g.commands bellow
+# this has to be right after r setup code chunk with no space
+
 library(tidyverse)
 post_meal_data <- read_csv2(
   here::here("data/post-meal-insulin.csv")
 )
+
+
+small_post_meal_data <- select(post_meal_data, id, Age, BMI, Group, auc_pg, auc_ins, glykemi)
 ```
 ## Showing the data
 ```{r}
@@ -142,9 +147,24 @@ ggplot(post_meal_data, aes(x = BMI, y = auc_pg)) +
   geom_smooth()
 ```
 
-usethis::gh_token_help()
-usethis::create_github_token()
+## Selecting data
+```{r}
+select(post_meal_data, Age, BMI, Weight)
+```
 
-# personal token name
-#LearningR
+```{r}
+select(post_meal_data, -Group)
+```
+
+```{r}
+select(post_meal_data, starts_with("PG"))
+```
+
+```{r}
+select(post_meal_data, ends_with("DXA"))
+```
+
+```{r}
+select(post_meal_data, contains("0"))
+```
 
