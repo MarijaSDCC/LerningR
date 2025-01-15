@@ -24,18 +24,20 @@ DDEA postdoc working on a **diabetic** *foot complications*
 ## Simple code
 ```{r}
 3 * 3
-
 ```
 
 ## Setup code chunk
 
 ```{r setup}
-library(tidyverse) 
+# the two options of what to show in the output file (elated to chapter 8 of the course)
+# press ctrl-shift-render after you give eg.commands bellow
+# this has to be right after r setup code chunk with no space
+#| message: false
+#|warning: false
+library(tidyverse)
 post_meal_data <- read_csv2(
-  here::here ("data/post-meal-insulin.csv")
+  here::here("data/post-meal-insulin.csv")
 )
-
-
 ```
 ## Showing the data
 ```{r}
@@ -46,5 +48,103 @@ post_meal_data
 glimpse(post_meal_data)
 ```
 
+```{r}
+ggplot(post_meal_data, aes(x = BMI)) +
+  geom_histogram()
+```
 
+```{r}
+#| fig-cap: "Distribution of BMI"
+#| label: fig-bmi-histo
+ggplot(post_meal_data, aes(x = BMI)) +
+  geom_histogram()
+```
+
+@fig-bmi-histo
+
+```{r}
+post_meal_data |>
+  ggplot(aes(x = Group, fill = glykemi)) +
+  geom_bar()
+```
+
+```{r}
+#| fig-cap: ""
+#| label: fig-istribution_BMI
+ggplot(post_meal_data, aes(x = ))
+```
+
+See @fig-___ above for a cool plot!
+
+```{r}
+post_meal_data |>
+  ggplot(aes(x = Group, fill = glykemi)) +
+  geom_bar()
+```
+
+```{r}
+post_meal_data |>
+  ggplot(aes(x = Group, fill = as.character(glykemi))) +
+  geom_bar()
+```
+
+```{r}
+post_meal_data |>
+  ggplot(aes(x = Group, fill = as.character(glykemi))) +
+  geom_bar(position = position_dodge())
+```
+
+## Putting two plots side by side
+
+```{r}
+ggplot(post_meal_data, aes(x = BMI)) +
+  geom_histogram()
+```
+
+```{r}
+ggplot(post_meal_data, aes(x = glykemi)) +
+  geom_bar()
+```
+
+# the next chunk combines the two graphs
+
+```{r side-by-side-figs}
+#| label: fig-bmi-glycemia
+#| fig-cap: "BMI and glycemia, side by side"
+#| fig-subcap:
+#| - "Distribution of BMI"
+#| - "Number of those with glycemia"
+#| layout-ncol: 2
+ggplot(post_meal_data, aes(x = BMI)) +
+  geom_histogram()
+ggplot(post_meal_data, aes(x = glykemi)) +
+  geom_bar()
+```
+
+## Plotting two continuous variables
+
+```{r}
+ggplot(post_meal_data, aes(x = BMI, y = auc_pg)) +
+  geom_point()
+```
+
+```{r}
+ggplot(post_meal_data, aes(x = BMI, y = auc_pg)) +
+  geom_point() +
+  geom_smooth()
+```
+
+```{r}
+#| fig-cap: "scatterplot showing BMI agains AUC of blood glucose"
+#| label: fig-bmi-auc-pg
+ggplot(post_meal_data, aes(x = BMI, y = auc_pg)) +
+  geom_point() +
+  geom_smooth()
+```
+
+usethis::gh_token_help()
+usethis::create_github_token()
+
+# personal token name
+#LearningR
 
