@@ -61,29 +61,25 @@ post_meal_data
 
 ```{r}
 glimpse(post_meal_data)
-```
 
-```{r}
 ggplot(post_meal_data, aes(x = BMI)) +
   geom_histogram()
 ```
 
-```{r}
+```{r make_fig_caption}
 #| fig-cap: "Distribution of BMI"
 #| label: fig-bmi-histo
 ggplot(post_meal_data, aes(x = BMI)) +
   geom_histogram()
 ```
 
-@fig-bmi-histo
-
-```{r}
+```{r make_graph}
 post_meal_data |>
   ggplot(aes(x = Group, fill = glykemi)) +
   geom_bar()
 ```
 
-```{r}
+```{r improve_fog_caption}
 #| fig-cap: ""
 #| label: fig-istribution_BMI
 ggplot(post_meal_data, aes(x = ))
@@ -110,7 +106,6 @@ post_meal_data |>
 ```
 
 ## Putting two plots side by side
-
 ```{r}
 ggplot(post_meal_data, aes(x = BMI)) +
   geom_histogram()
@@ -122,7 +117,6 @@ ggplot(post_meal_data, aes(x = glykemi)) +
 ```
 
 # the next chunk combines the two graphs
-
 ```{r side-by-side-figs}
 #| label: fig-bmi-glycemia
 #| fig-cap: "BMI and glycemia, side by side"
@@ -137,8 +131,7 @@ ggplot(post_meal_data, aes(x = glykemi)) +
 ```
 
 ## Plotting two continuous variables
-
-```{r}
+```{r 2 cont_variables}
 ggplot(post_meal_data, aes(x = BMI, y = auc_pg)) +
   geom_point()
 ```
@@ -286,4 +279,72 @@ tidied_post_meal_data |>
     x = "Body mass index (BMI)",
     y = "Insulin to glucose ratio"
   )
+```
+# Task 1.
+```{r}
+post_meal_data |>
+  mutate(
+    percent_body_fat = (Fat.mass.DXA / Weight) * 100,
+    young = if_else(Age < 40, "Young", "Old")
+  ) |>
+  ggplot(aes(x = Group, y = percent_body_fat, colour = young)) +
+  geom_jitter(width = 0.2)
+```
+# Task 2.
+```{r}
+post_meal_data |>
+  mutate(
+    insulin_glucose_ratio = (auc_ins / auc_pg),
+    insulin_insensitive = if_else(insulin_glucose_ratio > mean(insulin_glucose_ratio), "Insensitive", "Sensitive")
+  ) |>
+  ggplot(aes(x = BMI, y = Bone.mineral.DXA)) +
+  geom_point() +
+  geom_smooth() +
+  facet_grid(cols = vars(insulin_insensitive))
+```
+## Changing the colour schemes
+# Tasks 1, 2, 3, 4
+```{r color change_task 1 and 2}
+post_meal_data |>
+  mutate(hyperglycemia = if_else(glykemi == 1, "Yes", "No")) |>
+  ggplot(aes(x = Group, fill = hyperglycemia)) +
+  geom_bar(position = position_dodge()) +
+  scale_fill_viridis_d()
+# scale_fill_viridis_d(option = "magma")
+```
+```{r color change task 3 and 4}
+post_meal_data |>
+  ggplot(aes(x = auc_pg, y = auc_ins, colour = BMI)) +
+  geom_point() +
+  scale_colour_viridis_c()
+# scale_colour_viridis_c(option = "inferno")
+```
+## Calculating summary statistics
+
+```{r}
+tidied_post_meal_data |>
+  summarise(
+    max_bmi = max(BMI),
+    min_bmi = min(BMI)
+  )
+```
+## Summarise with splitting
+```{r}
+tidied_post_meal_data |>
+  group_by(Group) |>
+  summarise(
+    mean_age = mean(Age),
+    mean_bmi = mean(BMI)
+  )
+```
+## ungroup data just in case
+## there is so called hidden grouping
+```{r}
+tidied_post_meal_data |>
+  group_by(Group) |>
+  summarise(
+    mean_age = mean(Age),
+    mean_bmi = mean(BMI)
+  ) |>
+  ungroup()
 ```
