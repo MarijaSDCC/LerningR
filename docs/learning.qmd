@@ -27,8 +27,7 @@ DDEA postdoc working on a **diabetic** *foot complications*
 ```
 
 ## Setup code chunk
-
-```{r setup}
+```{r setup code}
 #| message: false
 #| warning: false
 
@@ -41,8 +40,19 @@ post_meal_data <- read_csv2(
   here::here("data/post-meal-insulin.csv")
 )
 
-
 small_post_meal_data <- select(post_meal_data, id, Age, BMI, Group, auc_pg, auc_ins, glykemi)
+tidier_post_meal_data <- small_post_meal_data |>
+  rename(
+    auc_glucose = auc_pg,
+    auc_insulin = auc_ins
+  ) |>
+  filter(glykemi == 0) |>
+  select(-glykemi)
+tidied_post_meal_data <- tidier_post_meal_data |>
+  mutate(
+    insulin_glucose_ratio = auc_insulin / auc_glucose,
+    Group = if_else(Group == "CTR", "Control", "First-degree relative")
+  )
 ```
 ## Showing the data
 ```{r}
@@ -168,3 +178,112 @@ select(post_meal_data, ends_with("DXA"))
 select(post_meal_data, contains("0"))
 ```
 
+## Renaming specific columns
+```{r}
+small_post_meal_data |>
+  rename(aug_glucose = auc_pg)
+
+small_post_meal_data |>
+  rename(
+    aug_glucose = auc_pg,
+    auc_insulin = auc_ins
+  )
+```
+
+## Select and rename tasks
+# Task 1.
+```{r}
+post_meal_data |>
+  select(contains("OGTT"))
+```
+# Task 2.
+```{r}
+post_meal_data |>
+  select(contains(".."), -contains("...")) |>
+  rename(
+    P.Glucose.minus5.OGTT = P.Glucose..5.OGTT,
+    Insulin.minus5.OGTT.X = Insulin..5.OGTT.X
+  )
+```
+# Task 3.
+```{r}
+post_meal_data |>
+  select(id, BMI, Length, Weight, Age) |>
+  rename(Height = Length)
+```
+## filtering
+```{r}
+small_post_meal_data |>
+  filter(glykemi == 1)
+
+small_post_meal_data |>
+  filter(BMI >= 25)
+
+small_post_meal_data |>
+  filter(Group == "CTR")
+```
+
+```{r}
+small_post_meal_data |>
+  filter(Group == "CTR", BMI >= 25)
+```
+## Modify the columnn
+```{r}
+tidier_post_meal_data |>
+  mutate(
+    insulin_glucose_ratio =
+      auc_insulin / auc_glucose,
+    Group = if_else(Group == "CTR",
+      "Control", "First-degree relative"
+    )
+  )
+```
+# Task 1.
+```{r random}
+post_meal_data |>
+  filter(BMI >= 25 & BMI <= 40 & Group == "FDR")
+```
+# Task 2.
+```{r}
+post_meal_data |>
+  mutate(percent_body_fat = (Fat.mass.DXA / Weight) * 100) |>
+  filter(percent_body_fat > 30)
+```
+
+##Visualising with jitter plot
+```{r data visualisation}
+tidied_post_meal_data |>
+  mutate(overweight = if_else(BMI >= 25, "Overweight", "Not overweight")) |>
+  ggplot(aes(x = overweight, y = insulin_glucose_ratio)) +
+  geom_jitter()
+```
+## plotting 3 or more variables
+```{r}
+tidied_post_meal_data |>
+  filter(BMI < 30) |>
+  ggplot(aes(x = Age, y = auc_insulin, colour = Group)) +
+  geom_point()
+```
+## Make subgroups within the same group
+## Separate by colour
+```{r}
+tidied_post_meal_data |>
+  filter(BMI < 30) |>
+  mutate(young = if_else(Age < 40, "Young", "Old")) |>
+  ggplot(aes(x = BMI, y = insulin_glucose_ratio, colour = Group)) +
+  geom_point() +
+  facet_grid(rows = vars(young))
+```
+## How to modify x and y axes (lab function)
+```{r modify x or y}
+tidied_post_meal_data |>
+  filter(BMI < 30) |>
+  mutate(young = if_else(Age < 40, "Young", "Old")) |>
+  ggplot(aes(x = BMI, y = insulin_glucose_ratio, colour = Group)) +
+  geom_point() +
+  facet_grid(rows = vars(young)) +
+  labs(
+    x = "Body mass index (BMI)",
+    y = "Insulin to glucose ratio"
+  )
+```
