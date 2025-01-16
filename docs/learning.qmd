@@ -341,8 +341,9 @@ tidied_post_meal_data |>
 ## there is so called hidden grouping
 ```{r}
 #| label: tbl-mean-age-bmi
-#| tbl-cap: "Mean values of Age and BMI for eaach group"
-tidied_post_meal_data |>
+#| tbl-cap: "Mean values of Age and BMI for each group"
+
+tidied_post_meal_data  |>
   group_by(Group) |>
   summarise(
     "Mean Age(yrs)" = round(mean(Age), 1),
@@ -352,3 +353,35 @@ tidied_post_meal_data |>
   knitr::kable()
 ```
 # to edit column/ raw names with spaces: use ""
+
+
+# Exercise 13_6-bigger table
+# Creating tables with R
+```{r}
+# Task 1
+#| label: tbl-summary-table
+#| fig-cap: "Median AUC values by age group and family history."
+tidied_post_meal_data |>
+  # Task 2.
+  filter(BMI < 30) |>
+  # Task 3.
+  mutate(
+    age_group = if_else(Age < 40, "Young", "Old"),
+    Group = if_else(Group == "CTR", "Control", "First-degree relative")
+  ) |>
+  # Task 4.
+  group_by(Group, age_group) |>
+  summarise(
+    "AUC c-Peptide" = round(median(auc_cp), 1),
+    "AUC Glucose" = round(median(auc_pg), 1),
+    "AUC Insulin" = round(median(auc_ins), 1)
+  ) |>
+  # Task 5.
+  rename(
+    "Age group" = age_group,
+    "Family history" = Group
+  ) |>
+  # Task 6.
+  ungroup() |>
+  knitr::kable()
+```
